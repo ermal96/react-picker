@@ -1,7 +1,7 @@
 export type PickerState = {
-    selectedDate: Date,
+    selectedDate: Date | null,
     activeDate: Date,
-    setSelectedDate: (value: Date) => void
+    setSelectedDate: (value: Date | null) => void
     setActiveDate: (value: Date) => void
   }
   

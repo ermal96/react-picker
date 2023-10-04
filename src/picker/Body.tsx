@@ -12,12 +12,16 @@ import {
 } from "date-fns";
 
 import { AiOutlineLeft, AiOutlineRight } from "react-icons/ai";
-import { usePickerStore } from "./store";
 
-export const Body = () => {
+type BodyProps = {
+    activeDate: Date
+    selectedDate: Date | null;
+    setSelectedDate: (value: Date | null) => void;
+    setActiveDate: (value: Date) => void;
+}
 
-    const { selectedDate, activeDate, setSelectedDate, setActiveDate } = usePickerStore();
 
+export const Body = ({ activeDate, selectedDate, setActiveDate, setSelectedDate }: BodyProps) => {
 
     const getHeader = () => {
         return (
@@ -61,7 +65,7 @@ export const Body = () => {
                     className={`flex items-center justify-center w-14 h-12 cursor-pointer shadow rounded-md hover:bg-blue-600 hover:text-white  transition-all 
                     ${isSameMonth(currentDate, activeDate) ? "" : "text-gray-300 bg-transparent shadow-none pointer-events-none"} 
                     ${isSameDay(currentDate, selectedDate) ? "bg-blue-600 text-white" : ""}
-                    ${isSameDay(currentDate, new Date()) ? "bg-blue-600 text-white" : ""}`}
+                   `}
                     onClick={() => {
                         setSelectedDate(cloneDate);
                     }}
@@ -85,9 +89,12 @@ export const Body = () => {
         const allWeeks = [];
 
         while (currentDate <= endDate) {
+
             allWeeks.push(
-                generateDatesForCurrentWeek(currentDate, selectedDate, activeDate)
+                generateDatesForCurrentWeek(currentDate, selectedDate || new Date(), activeDate)
             );
+
+
             currentDate = addDays(currentDate, 7);
         }
 
@@ -95,7 +102,7 @@ export const Body = () => {
     };
 
     return (
-        <section className="bg-neutral-50 border w-max p-4 rounded-2xl m-9">
+        <section className="bg-neutral-50 border absolute top-16 w-max p-4 rounded-2xl">
             {getHeader()}
             {getWeekDaysNames()}
             {getDates()}

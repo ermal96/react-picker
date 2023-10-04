@@ -1,58 +1,31 @@
 
-import { format, isValid, parse } from "date-fns";
 import { Body } from "./Body"
-import { usePickerStore } from "./store";
-import { useCallback, useMemo, useState } from "react";
+
+import { useMemo, useState } from "react";
+import { InputHeader } from "./InputHeader";
 
 export const Picker = () => {
-    const dateFormat = useMemo(() => 'dd/MM/yyyy', [])
-    const [isDateValid, setIsDateValid] = useState<boolean>()
-
-    const { selectedDate, setSelectedDate, setActiveDate } = usePickerStore();
-    const [date, setDate] = useState(format(selectedDate, dateFormat))
-
-    const getFormmatedDate = useCallback((date: string) => {
-        const parsed = parse(date, dateFormat, new Date());
-        if (isValid(parsed)) {
-            return parsed;
-        }
-        return 0;
-    }, [dateFormat]);
-
-
-    const handleInputChange = useCallback((e: { target: { value: string; }; }) => {
-        const date = getFormmatedDate(e.target.value)
-
-        setDate(e.target.value)
-
-        if (date) {
-            setSelectedDate(date)
-            setActiveDate(date)
-        }
-
-    }, [getFormmatedDate, setActiveDate, setSelectedDate]);
-
-
-    const handleOnblur = useCallback(() => {
-        console.log(date)
-        if (getFormmatedDate(date)) {
-            setIsDateValid(true)
-        } else {
-            setIsDateValid(false)
-        }
-    }, [date, getFormmatedDate])
+    const dateFormat = useMemo(() => 'dd.MM.yyyy', [])
+    const [isBodyOpen, setIsBodyOpen] = useState(false);
+    const [selectedDate, setSelectedDate] = useState<Date | null>(null);
+    const [activeDate, setActiveDate] = useState(new Date())
 
     return (
-        <div>
-            <input
-                onBlur={handleOnblur}
-                className={`border rounded ${isDateValid === undefined ? '' : isDateValid === false ? 'border-red-700' : ''}`}
-                onChange={handleInputChange}
-                type="text"
-                defaultValue={format(getFormmatedDate(date), dateFormat)}
-                placeholder={dateFormat}
+        <div className="m-10 w-96 relative">
+            <InputHeader
+                dateFormat={dateFormat}
+                selectedDate={selectedDate}
+                setActiveDate={setActiveDate}
+                setIsBodyOpen={setIsBodyOpen}
+                setSelectedDate={setSelectedDate}
             />
-            <Body />
+            {isBodyOpen && <Body
+                selectedDate={selectedDate}
+                activeDate={activeDate}
+                setActiveDate={setActiveDate}
+                setSelectedDate={setSelectedDate}
+            />}
+
         </div>
 
     )
